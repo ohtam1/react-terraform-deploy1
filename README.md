@@ -120,16 +120,6 @@ npm run preview
 
 参考: [Content-Type - HTTP | MDN](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/Content-Type)
 
-### Etag
-
-キャッシュ効率を考えてEtagも設定しています。景気よくMD5SUMを使っていますが、Apacheが動的生成するようなタイムスタンプ・ファイル長・i-nodeから生成するといいかもしれません。
-
-参考: [ETag - HTTP | MDN](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/ETag)
-
-EtagはAWS S3コンソールではメタデータではなく
-オブジェクトの概要のところにあります。
-
-![AWS S3コンソールでのetagサンプル](docs/imgs/etag.png "AWS S3コンソールでのetagサンプル")
 
 
 ## 補足: Accept-Encoding

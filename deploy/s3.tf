@@ -76,7 +76,10 @@ resource "aws_s3_object" "www" {
   key    = each.value
   source = "${path.root}/../dist-gz/${each.value}"
 
-  etag             = filemd5("${path.root}/../dist-gz/${each.value}")
+  # etag             = filemd5("${path.root}/../dist-gz/${each.value}")
+  # etagはmd5sumとは限らないので、おおむね動くけれど、この手法は使うべきではない。
+  # 参照 [Common Response Headers - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTCommonResponseHeaders.html) の Etag
+
   content_type     = lookup(local.mime_types, regex("\\.[^.]+$", each.value), null)
   content_encoding = contains(tolist([".js", ".svg", ".css", ".json"]), regex("\\.[^.]+$", each.value)) ? "gzip" : null
   # acl          = "public-read"  # ACLを使わない設定にしたので設定できない
