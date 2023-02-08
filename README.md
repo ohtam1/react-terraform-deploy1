@@ -137,3 +137,5 @@ npm run preview
 [Brotli](https://ja.wikipedia.org/wiki/Brotli)圧縮も試す(そんなに難しくないはず)。
 
 注意: Brotli は https: のみ。
+
+Brotliにしてみました。
