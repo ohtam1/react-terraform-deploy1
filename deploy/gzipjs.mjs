@@ -10,10 +10,11 @@
 import fs, { createReadStream, createWriteStream } from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream";
-import { createGzip } from "node:zlib";
+import { createGzip, createBrotliCompress } from "node:zlib";
 
 const SRCDIR = "../dist";
-const DESTDIR = "../dist-gz";
+// const DESTDIR = "../dist-gz";
+const DESTDIR = "../dist-br";
 const gzList = [".js", ".css", ".svg", ".json"];
 
 fs.rmSync(DESTDIR, { recursive: true, force: true });
@@ -25,6 +26,19 @@ const gzipFile = (src, dest) => {
   // console.log(`gzip -9c ${src} > ${dest}`);
 
   pipeline(source, gzip, destination, (err) => {
+    if (err) {
+      console.error("An error occurred:", err);
+      process.exitCode = 1;
+    }
+  });
+};
+
+const brotliFile = (src, dest) => {
+  const br = createBrotliCompress();
+  const source = createReadStream(src);
+  const destination = createWriteStream(dest);
+
+  pipeline(source, br, destination, (err) => {
     if (err) {
       console.error("An error occurred:", err);
       process.exitCode = 1;
@@ -46,7 +60,8 @@ const copyRecursiveSync = (src, dest) => {
     });
   } else {
     if (gzList.includes(path.extname(src))) {
-      gzipFile(src, dest);
+      // gzipFile(src, dest);
+      brotliFile(src, dest);
     } else {
       fs.copyFileSync(src, dest);
     }

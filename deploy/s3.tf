@@ -70,13 +70,13 @@ resource "aws_s3_bucket_website_configuration" "www" {
 }
 
 resource "aws_s3_object" "www" {
-  for_each = fileset("${path.root}/../dist-gz", "**/*")
+  for_each = fileset("${path.root}/../dist-br", "**/*")
 
   bucket = aws_s3_bucket.www.id
   key    = each.value
-  source = "${path.root}/../dist-gz/${each.value}"
+  source = "${path.root}/../dist-br/${each.value}"
   metadata = {
-    hash = filemd5("${path.root}/../dist-gz/${each.value}")
+    hash = filemd5("${path.root}/../dist-br/${each.value}")
   }
   # S3のEtagとは別物。これを入れないとファイル更新時に再アップロードされない。
   # あとOSが異なると圧縮の出力が微妙に変わって、再アップロードされる場合があるけど簡単に修正できない。
@@ -84,7 +84,7 @@ resource "aws_s3_object" "www" {
   # 参照 [Common Response Headers - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTCommonResponseHeaders.html) の Etag
 
   content_type     = lookup(local.mime_types, regex("\\.[^.]+$", each.value), null)
-  content_encoding = contains(tolist([".js", ".svg", ".css", ".json"]), regex("\\.[^.]+$", each.value)) ? "gzip" : null
+  content_encoding = contains(tolist([".js", ".svg", ".css", ".json"]), regex("\\.[^.]+$", each.value)) ? "br" : null
   # acl          = "public-read"  # ACLを使わない設定にしたので設定できない
 }
 
