@@ -75,9 +75,12 @@ resource "aws_s3_object" "www" {
   bucket = aws_s3_bucket.www.id
   key    = each.value
   source = "${path.root}/../dist-gz/${each.value}"
-
-  # etag             = filemd5("${path.root}/../dist-gz/${each.value}")
-  # etagはmd5sumとは限らないので、おおむね動くけれど、この手法は使うべきではない。
+  metadata = {
+    hash = filemd5("${path.root}/../dist-gz/${each.value}")
+  }
+  # S3のEtagとは別物。これを入れないとファイル更新時に再アップロードされない。
+  # あとOSが異なると圧縮の出力が微妙に変わって、再アップロードされる場合があるけど簡単に修正できない。
+  # **S3のEtagはmd5sumとは限らないので、** metaでなくetag=filemd5()でおおむね動くけれど、分割アップロードされる大きなファイルで同一内容チェックできない。
   # 参照 [Common Response Headers - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTCommonResponseHeaders.html) の Etag
 
   content_type     = lookup(local.mime_types, regex("\\.[^.]+$", each.value), null)
